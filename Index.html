@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mahmudul IPTV PRO</title>
+    <!-- Tailwind CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <!-- Core Hls.js -->
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest/dist/hls.min.js"></script>
+    <!-- Custom Style Sheet -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-[#030712] text-slate-100 font-sans h-screen w-screen flex flex-col antialiased overflow-hidden">
+
+    <!-- Premium Bluish Header -->
+    <header class="bg-[#0f172a]/80 backdrop-blur-md border-b border-cyan-950/60 px-4 md:px-8 py-3 flex items-center justify-between gap-4 shadow-lg shadow-cyan-950/20 shrink-0 z-50">
+        <div class="flex items-center space-x-3">
+            <div class="relative flex h-3 w-3">
+                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
+                <span class="relative inline-flex rounded-full h-3 w-3 bg-cyan-500"></span>
+            </div>
+            <div>
+                <h1 class="text-lg md:text-xl font-extrabold tracking-wider bg-gradient-to-r from-cyan-400 via-blue-500 to-indigo-400 bg-clip-text text-transparent">MAHMUDUL IPTV<span class="text-xs ml-1 px-1.5 py-0.5 bg-cyan-500/10 text-cyan-400 rounded border border-cyan-500/30 font-bold uppercase tracking-widest">PRO</span></h1>
+            </div>
+        </div>
+        
+        <!-- Live Search -->
+        <div class="relative w-full max-w-xs">
+            <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-500 text-sm">🔍</span>
+            <input type="text" id="search" oninput="searchChannels()" placeholder="Search channels..." class="w-full pl-9 pr-4 py-2 bg-[#020617]/80 text-sm rounded-xl border border-slate-800 focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/20 focus:outline-none placeholder-slate-600 text-slate-200 transition-all duration-300">
+        </div>
+    </header>
+
+    <!-- Main Fixed Container -->
+    <main class="flex flex-col lg:flex-row flex-1 min-h-0 w-full overflow-hidden">
+        
+        <!-- Left Section: Video Player -->
+        <section class="flex-1 bg-[#020617] flex items-center justify-center p-3 md:p-6 min-h-0">
+            <div id="videoContainer" class="w-full max-w-5xl aspect-video bg-black rounded-2xl overflow-hidden shadow-[0_0_50px_rgba(6,182,212,0.15)] relative border border-cyan-950/50 group player-box">
+                
+                <!-- Native Video Frame -->
+                <video id="video" class="w-full h-full object-contain" autoplay playsinline></video>
+
+                <!-- 🔴 Sync Live Button (Top Right Corner) -->
+                <button id="syncLiveBtn" onclick="syncToLive(event)" class="absolute top-4 right-4 z-30 bg-slate-950/80 backdrop-blur-md border border-red-500/30 text-red-400 hover:text-white hover:bg-red-600 px-2.5 py-1 text-[11px] font-bold rounded-lg transition-all duration-300 flex items-center gap-1.5 shadow-lg opacity-0 group-hover:opacity-100 cursor-pointer" title="Sync to Live Stream">
+                    <span class="relative flex h-2 w-2">
+                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                        <span class="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
+                    </span>
+                    SYNC LIVE
+                </button>
+
+                <!-- Cinematic UI Glass Controls Overlay -->
+                <div class="custom-controls absolute bottom-0 inset-x-0 bg-gradient-to-t from-[#020617] via-[#020617]/70 to-transparent pt-12 p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4 transition-opacity duration-300 z-10">
+                    
+                    <!-- Left: Media Buttons & Metadata -->
+                    <div class="flex items-center space-x-4">
+                        <div class="flex items-center space-x-2">
+                            <button onclick="prevChannel()" class="ctrl-btn" title="Previous Channel">
+                                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/></svg>
+                            </button>
+                            <button onclick="togglePlay()" class="ctrl-btn scale-110 bg-cyan-600 hover:bg-cyan-500 border-none text-white shadow-lg shadow-cyan-500/20" title="Play / Pause (Space)">
+                                <svg id="playIcon" class="w-4 h-4 hidden" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                                <svg id="pauseIcon" class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+                            </button>
+                            <button onclick="nextChannel()" class="ctrl-btn" title="Next Channel">
+                                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M16 18h2V6h-2M5 6v12l8.5-6z"/></svg>
+                            </button>
+                        </div>
+                        
+                        <!-- Station Display Info -->
+                        <div class="border-l border-slate-800 pl-4">
+                            <p class="text-xs text-slate-500 font-medium uppercase tracking-wider">Now Streaming</p>
+                            <h3 id="currentChannelName" class="text-sm font-bold text-white truncate max-w-[150px] sm:max-w-xs">Connecting Feed...</h3>
+                        </div>
+                    </div>
+
+                    <!-- Right: Volume, Quality Setting & Fullscreen -->
+                    <div class="flex items-center justify-between sm:justify-end space-x-3 relative">
+                        <!-- Volume Slider -->
+                        <div class="flex items-center space-x-2 bg-slate-900/60 px-3 py-1.5 rounded-xl border border-slate-800/40">
+                            <span class="text-xs text-slate-400">🔊</span>
+                            <input type="range" id="volumeSlider" min="0" max="1" step="0.1" value="1" oninput="setVolume(this.value)" class="w-16 sm:w-20 accent-cyan-500 h-1 rounded-lg cursor-pointer bg-slate-700">
+                        </div>
+                        
+                        <!-- ⚙️ Quality Settings Menu Wrapper -->
+                        <div class="relative inline-block text-left select-container">
+                            <button onclick="toggleQualityMenu(event)" class="ctrl-btn hover:text-white" title="Video Quality">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                </svg>
+                            </button>
+                            <!-- Dropdown List Flyout -->
+                            <div id="qualityMenu" class="hidden absolute bottom-12 right-0 w-32 bg-slate-950/95 border border-slate-800 rounded-xl overflow-hidden shadow-2xl backdrop-blur-lg z-50 flex flex-col py-1">
+                                <!-- Dynamically Rendered Option Items -->
+                            </div>
+                        </div>
+                        
+                        <!-- Fullscreen Controller -->
+                        <button onclick="toggleFullscreen()" class="ctrl-btn hover:text-white" title="Toggle Fullscreen">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 8V4h4M4 16v4h4M20 8V4h-4M20 16v4h-4"/></svg>
+                        </button>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- Right Section: Playlist Drawer -->
+        <aside class="w-full lg:w-80 bg-[#0b0f19] border-t lg:border-t-0 lg:border-l border-cyan-950/40 flex flex-col h-[45vh] lg:h-full shadow-2xl shrink-0 min-h-0">
+            <!-- Header of Sidebar -->
+            <div class="px-4 py-3 bg-[#0f172a]/40 border-b border-cyan-950/40 flex items-center justify-between shrink-0">
+                <span class="text-xs font-bold text-slate-400 tracking-widest uppercase">Live Stations</span>
+                <span id="stationCount" class="text-[10px] font-extrabold px-2 py-0.5 bg-cyan-950 text-cyan-400 rounded-full border border-cyan-800/30">0 ONLINE</span>
+            </div>
+            
+            <!-- Grid Scrollable Canvas -->
+            <div id="channelGrid" class="overflow-y-auto flex-1 p-3 grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-2 gap-2.5 custom-scrollbar bg-[#020617]/10">
+                <!-- Dynamically loaded -->
+            </div>
+        </aside>
+
+    </main>
+
+    <script src="app.js"></script>
+</body>
+</html>

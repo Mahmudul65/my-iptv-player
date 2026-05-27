@@ -1,0 +1,154 @@
+/* Custom Scrollbar Optimization for Bluish Theme */
+.custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+    background: #1e293b;
+    border-radius: 99px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: #06b6d4; /* Neon Cyan */
+}
+
+/* Premium Bluish Channel Card Blueprint */
+.channel {
+    background: linear-gradient(135deg, #0f172a 0%, #020617 100%);
+    border: 1px solid rgba(14, 116, 144, 0.2);
+    border-radius: 0.75rem;
+    padding: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    
+    width: 100%;
+    height: 75px; 
+    box-sizing: border-box;
+    
+    transition: all 250ms cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+}
+
+.channel:hover {
+    border-color: rgba(6, 182, 212, 0.6);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px -8px rgba(6, 182, 212, 0.4);
+}
+
+/* লোগো ফিটিং ও ১০০% ফুল সেন্ট্রাল ভিজিবিলিটি ফিক্স */
+.channel img {
+    width: auto;
+    height: 100%;
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain; 
+    display: block;
+    margin: 0 auto; 
+    background-color: #ffffff; 
+    border-radius: 0.5rem;
+    padding: 6px; 
+    box-sizing: border-box;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.15));
+    transition: transform 250ms ease;
+}
+
+.channel:hover img {
+    transform: scale(1.03);
+}
+
+/* Selected Live Channel - Cyan Neon Glow UI State */
+.channel.active {
+    background: linear-gradient(135deg, rgba(6, 182, 212, 0.15) 0%, rgba(2, 6, 23, 0.9) 100%);
+    border-color: #06b6d4;
+    box-shadow: inset 0 0 10px rgba(6, 182, 212, 0.1), 0 4px 18px rgba(6, 182, 212, 0.3);
+}
+
+/* Cyan Active Indicator Dot */
+.channel.active::before {
+    content: '';
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    width: 6px;
+    height: 6px;
+    background-color: #06b6d4;
+    border-radius: 50%;
+    box-shadow: 0 0 8px #06b6d4;
+    z-index: 10;
+}
+
+/* নো-লোগো টেক্সট স্টাইল */
+.channel-text {
+    font-size: 11px;
+    font-weight: 700;
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #94a3b8;
+    padding: 0 4px;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+/* Media Controls Updates */
+.ctrl-btn {
+    color: #94a3b8;
+    background: rgba(15, 23, 42, 0.8);
+    border: 1px solid rgba(14, 116, 144, 0.3);
+    width: 2.3rem;
+    height: 2.3rem;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 150ms ease;
+    cursor: pointer;
+    flex-shrink: 0;
+}
+
+.ctrl-btn:hover {
+    color: #ffffff;
+    border-color: #06b6d4;
+    box-shadow: 0 0 10px rgba(6, 182, 212, 0.2);
+}
+
+.ctrl-btn:active {
+    transform: scale(0.95);
+}
+
+/* ⚙️ Quality Menu Dropdown Options Styling */
+.q-item {
+    width: 100%;
+    padding: 6px 12px;
+    font-size: 11px;
+    font-weight: 600;
+    text-align: left;
+    color: #94a3b8;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    transition: all 150ms ease;
+}
+
+.q-item:hover {
+    background: rgba(6, 182, 212, 0.1);
+    color: #06b6d4;
+}
+
+.q-item.active {
+    color: #ffffff;
+    background: rgba(6, 182, 212, 0.2);
+    font-weight: 700;
+    border-left: 2px solid #06b6d4;
+}
+
+/* Fullscreen Media Fixes */
+:-webkit-full-screen #videoContainer { width: 100%; height: 100%; max-width: 100%; }
+:-ms-fullscreen #videoContainer { width: 100%; height: 100%; max-width: 100%; }
+:fullscreen #videoContainer { width: 100%; height: 100%; max-width: 100%; }
